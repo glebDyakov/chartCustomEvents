@@ -1,0 +1,223 @@
+<html>
+<head>
+<style>
+	*{
+		padding:0px;
+		margin:0px;
+
+	}
+	#mydiv{
+		overflow-x:scroll;
+	}
+	#mycanvas{
+		overflow-x:scroll;
+	}
+</style>
+</head>
+<body>
+<div id="footer">добавить</div>
+<form>
+<h1 >
+Форма
+</h1>
+<label>максимальный приз</label>
+<input id="y"  type="number" value="8">
+<div id="myobject"><div><label>приз для этой вероятности</label><input id="p" type="number" value="5"><label>вероятность</label><input type="number" value="80" id="v"></div></div>
+<label>кол-во попыток</label>
+<input type="number" value="8" id="x">
+<input type="button" onclick="gen()" value="кликни">
+</form>
+<div id="mydiv">
+	<canvas id="mycanvas" width="4000px" height="350px">
+	</canvas>
+</div>
+<script>
+var addCustomEvent = document.getElementById("footer").addEventListener("click",function(){
+
+	var customDiv = document.createElement('div');
+	var customPrizeLabel = document.createElement('label');
+	
+	var customPrize = document.createElement('input');
+	var customVeroyatnostLabel = document.createElement('label');
+	var customVeroyatnost = document.createElement('input');
+	
+	document.querySelector("#myobject").appendChild(customDiv);
+	customDiv.appendChild(customPrizeLabel);
+	customDiv.appendChild(customPrize);
+	customDiv.appendChild(customVeroyatnostLabel);
+	customDiv.appendChild(customVeroyatnost);
+	//customEvents.push({'ver':customPrice.firstChildElement.textContent, 'verqwe':myItem.firstChild.textContent});
+/*
+<div>
+	<label>приз для этой вероятности</label>
+	<input id="p" type="number" value="5">
+	<label>вероятность</label>
+	<input type="number" value="80" id="v">
+</div>
+*/
+});
+
+var canvas = document.getElementById('mycanvas');
+var ctx = canvas.getContext('2d');
+ctx.fillStyle = 'rgb(200, 0, 0)';
+
+
+
+
+var arr=[];
+var x=document.querySelector("#x")
+
+var y=document.querySelector("#y")
+
+function gen(){
+	customEvents=[];
+	/*
+	document.querySelector("#myobject").childNodes.forEach(function(myItem){
+		//console.log(myItem);
+		customEvents.push({'ver':Number.parseInt(myItem.firstChildElement.textContent), 'verqwe':myItem.firstChild.textContent});
+	});	
+	//console.log(customEvents);
+	*/
+	for(childItem of document.querySelector("#myobject").childNodes){
+		/*
+		for(subChildItem of childItem.childNodes){
+			if(subChildItem.hasAttribute("value")){
+				customEvents.push({'veroyatnost':subChildItem.value, 'prize':subChildItem.value});
+			}
+			console.log(subChildItem);
+		}
+		*/
+
+		customEvents.push({'prize':Number.parseInt(childItem.childNodes[1].value), 'veroyatnost':Number.parseInt(childItem.childNodes[3].value)});
+		
+		//console.log(subChildItem);
+	}
+	console.log(customEvents);
+	//console.log(document.querySelector("#myobject").children[0]);
+	var v=document.querySelector("#v").value;
+	var p=document.querySelector("#p").value;
+	arr=[];
+	ctx.clearRect(0, 0, document.querySelector("#mycanvas").offsetWidth, document.querySelector("#mycanvas").offsetHeight);
+	
+	ctx.beginPath();
+	ctx.moveTo(30, 0);
+	ctx.lineTo(30, document.querySelector("#mycanvas").offsetHeight);
+	ctx.stroke();
+	ctx.closePath();
+
+	ctx.beginPath();
+	ctx.moveTo(0, document.querySelector("#mycanvas").offsetHeight - 30);
+	ctx.lineTo(document.querySelector("#mycanvas").offsetWidth, document.querySelector("#mycanvas").offsetHeight - 30);
+	ctx.stroke();
+	ctx.closePath();
+	for(var i=0;i<x.value;i++){
+		arr.push(Number.parseInt(Math.random() * (100 - 1) + 1));
+	
+	}
+	priceArr = new Array(...arr);
+	//console.log(priceArr);
+	priceArr=priceArr.map(function(arrItem){
+		/*
+		if(arrItem < 5){
+			return 5;
+		}
+		else if(arrItem > 5 && arrItem <= 30){
+			return 2;
+		}
+		
+		else if(arrItem > 30){
+			return -1;
+		}
+		
+		
+		//console.log(v);
+		
+		if(arrItem <= Number.parseInt(v)){
+			return Number.parseInt(p);
+		}
+		else{
+			return 0;
+		}
+		
+		return 1;
+		*/
+		for(subArrItem of customEvents){		
+			if(arrItem <= subArrItem.veroyatnost){
+				return subArrItem.prize;
+			}
+			else{
+				return 0;
+			}	
+			return 1;
+		};
+	});
+	//console.log(arr)
+	//console.log("pricearr");
+	//console.log(priceArr);
+	drawCurve();
+	drawText();
+}
+
+function drawText(){
+	ctx.font = '20px serif';
+	/*
+	ctx.fillText('1', 10,  document.querySelector("#mycanvas").offsetHeight - 30 * 2);
+	ctx.fillText('2', 10,  document.querySelector("#mycanvas").offsetHeight - 30 * 3);
+	ctx.fillText('3', 10,  document.querySelector("#mycanvas").offsetHeight - 30 * 4);
+	ctx.fillText('4', 10,  document.querySelector("#mycanvas").offsetHeight - 30 * 5);
+	*/
+	for(let item=0; item < y.value; item++){
+		ctx.fillText(item + 1, 10,  document.querySelector("#mycanvas").offsetHeight - 30 * (item + 2));	
+	}
+	
+	for(let item=0; item < arr.length; item++){
+		ctx.fillText((Number(item) + 1), 30 * (Number(item) + 2),  document.querySelector("#mycanvas").offsetHeight - 10);
+	}
+	item=0;
+}
+function drawCurve(){
+	/*
+	for(let q=0;q<arr.length;q++){
+		ctx.beginPath();
+		if(q == 0){
+			ctx.moveTo(30, document.querySelector("#mycanvas").offsetHeight - 30);
+		}else{
+			ctx.moveTo(30 * (q + 1),  document.querySelector("#mycanvas").offsetHeight - ( 30 * (priceArr[q - 1] + 1)));
+		}
+		ctx.lineTo(30 * (q + 2),  document.querySelector("#mycanvas").offsetHeight - ( 30 * (priceArr[q] + 1)));
+		ctx.stroke();
+		ctx.closePath();
+	}
+	*/
+	/*
+	for(let q=0;q<arr.length;q++){
+		var w = priceArr[q] == -1 ? -1 : priceArr[q];
+		var e = priceArr[q - 1] == -1 ? -1 : priceArr[q-1];
+		ctx.beginPath();
+		if(q == 0){
+			ctx.moveTo(30, document.querySelector("#mycanvas").offsetHeight - 30);
+		}else{
+			ctx.moveTo(30 * (q + 1),  document.querySelector("#mycanvas").offsetHeight - ( 30 * (e + 1)));
+		}
+		ctx.lineTo(30 * (q + 2),  document.querySelector("#mycanvas").offsetHeight - ( 30 * (w + 1)));
+		ctx.stroke();
+		ctx.closePath();
+	}
+	*/
+	for(let q=0;q<arr.length;q++){
+		var w = priceArr[q] == -1 ? -1 : priceArr[q];
+		var e = priceArr[q - 1] == -1 ? -1 : priceArr[q-1];
+		ctx.beginPath();
+		if(q == 0){
+			ctx.moveTo(30, document.querySelector("#mycanvas").offsetHeight - 30);
+		}else{
+			ctx.moveTo(30 * (q + 1),  document.querySelector("#mycanvas").offsetHeight - ( 30 * (e + 1)));
+		}
+		ctx.lineTo(30 * (q + 2),  document.querySelector("#mycanvas").offsetHeight - ( 30 * (w + 1)));
+		ctx.stroke();
+		ctx.closePath();
+	}
+}
+</script>
+</body>
+</html>
